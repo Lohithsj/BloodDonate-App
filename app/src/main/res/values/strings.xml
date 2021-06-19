@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">My Blood</string>
+    <string name="profile">Profile</string>
+    <string name="help">Help</string>
+    <string name="blood_bank">Blood Bank</string>
+    <string name="support">Support</string>
+    <string name="logout">Logout</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
+    <string name="hello">Hello</string>
+    <string name="register_as_a_donar">Register as a Donar</string>
+    <string name="send_otp">Send OTP</string>
+    <string name="enter_your_mobile_number">Enter your Mobile Number</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="welcome">Welcome!</string>
+    <string name="home">Home</string>
+    <string name="details">Details</string>
+    <string name="rateus">Rate us</string>
+    <string name="share">Share</string>
+    <string name="contact">Contact</string>
+    <string name="Support">Support us</string>
+    <string name="Address">address</string>
+    <string name="blood_group">Blood groups</string>
+    <string name="eligibility">Eligibility</string>
+    <string name="donation">Donation Process</string>
+    <string name="corona">Stay Home,Stay Safe</string>
+    <string name="donation_types">Donation types</string>
+    <string name="view_camps">View Camps</string>
+    <string name="blood_group1">Every person needs a healthy supply of blood. But, not every person’s blood is exactly the same.</string>
+    <string name="blood_group2">Human blood falls into four different blood groups: A, B, AB and O. Your blood also has what is known as an Rh factor: It either contains a certain protein or it doesn’t. (This is the positive [+] or negative [-] after your blood type.) The possible combinations create eight different blood types: A+, A-, B+, B-, AB+, AB-, O+ and O-.</string>
+    <string name="blood_group3">Donating blood is a great way to find out your blood type - we’ll tell you after you donate. And, whatever your type, every donor is needed and every donation transforms lives—including your own!</string>
+    <string name="blood_groups">Blood and Blood Types</string>
+    <string name="todo">TODO</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="types_of_blood">Types of Blood Donation</string>
+    <string name="how_different_types">How Different Types of Blood Donation Help Patients Every blood donation you make has an amazing impact on the world–it can save lives.</string>
+    <string name="ele_pt1">The Donor Should not be less than 45 Kilograms.</string>
+    <string name="ele_pt2">Donor should be in the age group of 18 to 65 years.</string>
+    <string name="ele_pt3">Temperature and Pulse of the donor shall be normal.</string>
+    <string name="point_bullet">•</string>
+    <string name="ele_pt4">The systolic and diastolic blood pressures are within normal limits.
+</string>
+    <string name="ele_pt5">Should have delivered 1 year ago and stopped lactation.</string>
+    <string name="ele_pt6">Should Not have been treated for malaria in last 3 months or 3 years if residing in endemic areas
+</string>
+    <string name="ele_pt8">Haemoglobin should not be less than 12.5 grams.</string>
+    <string name="ele_pt7">Should NOT have had shots for any of the following - Cholera, Typhoid, Diptheria, Tetanus, Plague, Gammaglobulin in last 15 days; Rabies vaccination in last 1 year.
+</string>
+    <string name="enter_first_name">First Name</string>
+    <string name="enter_last_name">Last Name</string>
+    <string name="enter_email">Email</string>
+    <string name="enter_address_line1">Address Line1</string>
+    <string name="enter_address_line2">Address Line2</string>
+    <string name="enter_city">City</string>
+    <string name="enter_zipcode">PinCode</string>
+    <string name="edit_btn">Next</string>
+    <string name="enter_village">Village</string>
+    <string name="gender">Gender</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_others">Others</string>
+    <string name="enter_state">State</string>
+    <string name="personal_details">Personal Details</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="e_rakt_kosh">E-Rakt Kosh</string>
+
+</resources>

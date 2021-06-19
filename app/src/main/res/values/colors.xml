@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#F62B94</color>
+    <color name="purple_500">#FA2A2A</color>
+    <color name="purple_700">#7317AF</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="home">#60B5F8</color>
+    <color name="profile">#FF36E4</color>
+    <color name="hospital">#E45167</color>
+    <color name="notification">#20E1D0</color>
+    <color name="red">#FF7AB4</color>
+    <color name="green">#099600</color>
+
+
+</resources>

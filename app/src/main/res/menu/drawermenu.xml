@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group >
+
+        <item
+            android:id="@+id/home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/home" />
+
+        <item
+            android:id="@+id/profile"
+            android:icon="@drawable/ic_profile"
+            android:title="@string/profile" />
+
+
+        <item
+            android:id="@+id/blood_bank"
+            android:icon="@drawable/ic_hospital"
+            android:title="@string/blood_bank" />
+
+    </group>
+
+    <item android:title="@string/contact">
+        <menu>
+            <group >
+
+                <item android:id="@+id/view_camp"
+                    android:title="@string/view_camps"
+                    android:icon="@drawable/ic_contact_page_black_24dp"/>
+
+
+                <item android:id="@+id/support"
+                    android:title="@string/support"
+                    android:icon="@drawable/ic_support"/>
+
+
+
+            </group>
+        </menu>
+    </item>
+    <item android:title="@string/Support">
+        <menu>
+            <group >
+
+                <item
+                    android:id="@+id/share"
+                    android:icon="@drawable/ic_share_black_24dp"
+                    android:title="@string/share" />
+
+                <item android:id="@+id/rate_us"
+                    android:title="@string/rateus"
+                    android:icon="@drawable/ic_stars_black_24dp"/>
+
+            </group>
+        </menu>
+    </item>
+
+    <group>
+        <item android:id="@+id/logout"
+            android:title="@string/logout"
+            android:icon="@drawable/ic_logout"/>
+    </group>
+
+
+</menu>

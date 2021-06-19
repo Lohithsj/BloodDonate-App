@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".MoreActivity">
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical">
+
+       <androidx.appcompat.widget.Toolbar
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           app:layout_collapseMode="pin">
+
+           <ImageView
+               android:layout_width="40dp"
+               android:layout_height="40dp"
+               android:onClick="callUserDashboardScreen"
+               android:src="@drawable/ic_keyboard_backspace_black_24dp"
+               android:id="@+id/back_btn"
+               />
+
+           <!--<TextView
+               android:layout_width="wrap_content"
+               android:layout_height="match_parent"
+               android:text="More"
+               android:textSize="30dp"
+               android:gravity="center"
+               android:textColor="#A105BC"
+               android:textStyle="bold"
+               /-->
+
+       </androidx.appcompat.widget.Toolbar>
+
+       <ScrollView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginHorizontal="10dp"
+           >
+
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+
+
+              <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:onClick="callDonateHistory"
+                  android:text="Donate History"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+              <TextView
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:text="Quick Links"
+                  android:paddingLeft="12sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="10dp"/>
+
+              <TextView
+                  android:id="@+id/e_rakt_kosh"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="@string/e_rakt_kosh"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+              <TextView
+                  android:id="@+id/nbtc"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="NBTC"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+
+              <TextView
+                  android:id="@+id/nhp"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="NHP"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+              <TextView
+                  android:id="@+id/nib"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="NIB"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+              <TextView
+                  android:id="@+id/mohfw"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="MoHFW"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+              <TextView
+                  android:id="@+id/cdsco"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="CDSCO"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+              <TextView
+                  android:id="@+id/nabh"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="NABH"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+              <TextView
+
+                  android:id="@+id/history"
+                  android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:text="Blood Donation History"
+                  android:textSize="25sp"
+                  android:textColor="@color/black"
+                  android:layout_marginTop="15dp"
+                  android:paddingLeft="12dp"
+                  />
+
+
+          </LinearLayout>
+
+       </ScrollView>
+   </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

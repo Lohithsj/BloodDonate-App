@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cnb_unselectedColor="#FF0057">
+
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Home"
+        app:cnb_iconColor="@color/home"
+        />
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="Profile"
+        app:cnb_iconColor="@color/profile"
+        />
+    <item
+        android:id="@+id/hospital"
+        android:icon="@drawable/ic_bloodtype_black_24dp"
+        android:title="Hospital"
+        app:cnb_iconColor="@color/hospital"
+        />
+    <item
+        android:id="@+id/notification"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="Notification"
+        app:cnb_iconColor="@color/notification"
+        />
+
+</menu>

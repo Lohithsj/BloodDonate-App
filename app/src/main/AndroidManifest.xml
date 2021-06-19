@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.blooddonate">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BloodDonate">
+        <activity android:name=".MoreActivity" />
+        <activity android:name=".DonationProcess" />
+        <activity android:name=".LoadingActivity" />
+        <activity android:name=".Updateprofile" />
+        <activity
+            android:name=".Elegibility"
+            android:parentActivityName=".Dashboard">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Dashboard" />
+        </activity>
+        <activity
+            android:name=".DonationTypes"
+            android:parentActivityName=".Dashboard">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Dashboard" />
+        </activity>
+        <activity android:name=".BloodGroup" />
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".Dashboard" />
+        <activity android:name=".Home" />
+        <activity android:name=".Verify" />
+        <activity android:name=".PhoneAuth" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
