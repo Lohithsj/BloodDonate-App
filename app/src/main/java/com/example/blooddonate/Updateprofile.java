@@ -46,6 +46,10 @@ public class Updateprofile extends AppCompatActivity {
     Button next;
     TextView titleText, slideText;
 
+    //log
+    // For Logging
+    public static final String LSJ = "Data saving";
+
 
     ImageView backBtn;
     ImageView selectDate;
@@ -66,7 +70,7 @@ public class Updateprofile extends AppCompatActivity {
     RadioGroup gender_group;
     RadioButton selectedGender;
     TextView  age_picker;
-    TextInputLayout first_name, last_name, email,dob_layout;
+    TextInputLayout first_name, last_name, email,blood_group,dob_layout;
     TextInputLayout Address_line1, Address_line2, Address_village, Address_zipcode;
     TextInputLayout Address_city, Address_state, phone_number;
     Button profile_edit_button;
@@ -92,9 +96,9 @@ public class Updateprofile extends AppCompatActivity {
         first_name = findViewById(R.id.signup_first_name);
         last_name = findViewById(R.id.signup_last_name);
         email = findViewById(R.id.signup_email);
+        blood_group = findViewById(R.id.signup_blodgroup);
         gender_group = findViewById(R.id.signup_gender_group);
         age_picker = findViewById(R.id.display_Date);
-        //dob_layout  = findViewById(R.id.signup_dob_layout);
 
         Address_line1 = findViewById(R.id.signup_Address_line1);
         Address_line2 = findViewById(R.id.signup_Address_line2);
@@ -153,19 +157,20 @@ public class Updateprofile extends AppCompatActivity {
 
     public void callNextScreen(View view) {
 
-        if (!validateFirstName() | !validateLastName() | !validateGender() | !validateAge() | !validateAddaress() | !validateZipcode() ) {
+        if (!validateFirstName() | !validateLastName() | validateEmail() | validateBloodGropu()  | !validateGender() | !validateAge() | !validateAddaress() | !validateZipcode() ) {
+            Log.d(LSJ, " User details are validated sucessfully");
             return;
         }
         //variable from this page
         String _first_name = first_name.getEditText().getText().toString().trim();
         String _last_name = last_name.getEditText().getText().toString().trim();
         String _email = email.getEditText().getText().toString().trim();
+        String _blood_group = blood_group.getEditText().getText().toString().trim();
+
         selectedGender = findViewById(gender_group.getCheckedRadioButtonId());
         String gender = selectedGender.getText().toString();
 
         String dateOfBirth = age_picker.getText().toString();
-
-
 
         //Variables address
         String address_line1= Address_line1.getEditText().getText().toString().trim();
@@ -176,21 +181,6 @@ public class Updateprofile extends AppCompatActivity {
         String address_state= Address_state.getEditText().getText().toString().trim();
 
 
-
-        //Intent intent = new Intent(getApplicationContext(), Dashboard.class);
-
-        //Add variables to intent so that it can be passed to next screen
-
-        //intent.putExtra("firstName", _first_name);
-        //intent.putExtra("lastName", _last_name);
-        //intent.putExtra("email", _email);
-        //intent.putExtra("gender", gender);
-        //intent.putExtra("dateOfBirth", dateOfBirth);
-
-
-
-
-
         final DocumentReference docRefUserDetails = fStore.collection("UserDetails").document(fsUserID);
 
 
@@ -198,6 +188,7 @@ public class Updateprofile extends AppCompatActivity {
         userDetails.put("firstName",_first_name);
         userDetails.put("lastName",_last_name);
         userDetails.put("email",_email );
+        userDetails.put("blood_group",_blood_group );
         userDetails.put("gender",gender );
         userDetails.put("dateOfBirth",dateOfBirth);
         userDetails.put("address_line1",address_line1 );
@@ -215,12 +206,11 @@ public class Updateprofile extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    //Log.d(SMK, " UserDetails Inserted calling save data");
+                    Log.d(LSJ, " UserDetails Inserted calling save data");
 
                     saveData();
 
-                    //Log.d(SMK, " UserDetails Inserted calling DonarCountDetails");
-                    //donarCountDetails();
+                    Log.d(LSJ, " User details is saved sucessfully");
 
                     Intent intent = new Intent(getApplicationContext(), Dashboard.class);
                     startActivity(intent);
@@ -233,6 +223,19 @@ public class Updateprofile extends AppCompatActivity {
         });
 
 
+    }
+
+    private boolean validateBloodGropu(){
+        if (blood_group.getEditText().toString().trim().isEmpty()) {
+            try {
+                blood_group.setError("Enter Your Blood group");
+            }
+            catch (Exception e)
+            {}
+            next.requestFocus();
+            return false;
+        }
+        return true;
     }
 
     //validateFirstName
@@ -254,8 +257,9 @@ public class Updateprofile extends AppCompatActivity {
             return false;
         } else {
             first_name.setError(null);
-            first_name.setErrorEnabled(false);
+            Log.d(LSJ, " User first name validate sucessfully");
             return true;
+
         }
     }
 
@@ -272,9 +276,10 @@ public class Updateprofile extends AppCompatActivity {
         }
         else {
             last_name.setError(null);
-            last_name.setErrorEnabled(false);
+            Log.d(LSJ, " User last name validate sucessfully");
             return true;
         }
+
     }
 
     //Validate Email
@@ -292,9 +297,10 @@ public class Updateprofile extends AppCompatActivity {
             return false;
         } else {
             email.setError(null);
-            email.setErrorEnabled(false);
+            Log.d(LSJ, " User first email validate sucessfully");
             return true;
         }
+
     }
 
     //VALIDATE GENDER
@@ -303,27 +309,29 @@ public class Updateprofile extends AppCompatActivity {
             Toast.makeText(this, "Please Select Gender", Toast.LENGTH_SHORT).show();
             return false;
         } else {
+            Log.d(LSJ, " User gender validate sucessfully");
             return true;
         }
+
     }
 
     // VALIDATE Age
 
     private boolean validateAge() {
 
-        if(age_picker.getText().toString().length()!=18){
+        if(age_picker.getText().toString().length()!=10){
            dob_layout.setError("Please enter DOB in DD/MM/YYYY format");
            return false;
 
         }
-
-
+        Log.d(LSJ,  "VGV:  validateAge:furst line"+age_picker.getText().toString().trim().substring(6));
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int userAge = Integer.parseInt(age_picker.getText().toString().trim().substring(6));
 //        Log.d(VGV,  "VGV:  validateAge:"+userAge);
         int isAgeValid = currentYear - userAge;
+        Log.d(LSJ,  "VGV:  isAgeValid:"+isAgeValid);
         if (isAgeValid < 18) {
-            dob_layout.setError("You are not eligible to donate blood");
+            dob_layout.setError("You are not eligible to apply");
             return false;
         } else
             return true;
@@ -342,7 +350,7 @@ public class Updateprofile extends AppCompatActivity {
         }
         else {
             Address_line1.setError(null);
-            Address_line1.setErrorEnabled(false);
+            Log.d(LSJ, " User address validate sucessfully");
             return true;
         }
     }
@@ -364,7 +372,7 @@ public class Updateprofile extends AppCompatActivity {
             return false;
         } else {
             Address_zipcode.setError(null);
-            Address_zipcode.setErrorEnabled(false);
+            Log.d(LSJ, " User zipcode validate sucessfully");
             return true;
         }
     }
@@ -379,6 +387,7 @@ public class Updateprofile extends AppCompatActivity {
         //     editor.putBoolean(LOCATION_ADMIN, switch1.isChecked());
         editor.apply();
 //        editor.commit();
+        Log.d(LSJ, " User saved data sucessfully");
 
     }
 
@@ -406,10 +415,11 @@ public class Updateprofile extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        super.onBackPressed();
+        //super.onBackPressed();
         Intent mainIntent = new Intent(getApplicationContext(),Dashboard.class);
         startActivity(mainIntent);
         finish();
+        super.onBackPressed();
     }
 
 }

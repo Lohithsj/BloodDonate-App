@@ -12,7 +12,7 @@
         android:layout_height="104dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="29dp"
-        android:src="@drawable/ic_profile_pic"
+        android:src="@drawable/drawable_profile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.102"

@@ -55,7 +55,7 @@
     <string name="enter_city">City</string>
     <string name="enter_zipcode">PinCode</string>
     <string name="edit_btn">Next</string>
-    <string name="enter_village">Village</string>
+    <string name="enter_village">Village/Area/Street</string>
     <string name="gender">Gender</string>
     <string name="gender_male">Male</string>
     <string name="gender_female">Female</string>

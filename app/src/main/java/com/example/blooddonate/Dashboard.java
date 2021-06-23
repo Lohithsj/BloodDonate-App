@@ -50,7 +50,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_dashboard);
 
-        int[] images = {R.drawable.card1, R.drawable.card2, R.drawable.card3, R.drawable.card4};
+        int[] images = {R.drawable.card1, R.drawable.card2, R.drawable.card3, R.drawable.card4, R.drawable.card5};
 
         //menu hooks
         img_flipper = findViewById(R.id.iv_flipper);
