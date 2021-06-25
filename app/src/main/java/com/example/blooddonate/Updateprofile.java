@@ -167,6 +167,8 @@ public class Updateprofile extends AppCompatActivity {
         String _email = email.getEditText().getText().toString().trim();
         String _blood_group = blood_group.getEditText().getText().toString().trim();
 
+
+        Log.d(LSJ, "test1");
         selectedGender = findViewById(gender_group.getCheckedRadioButtonId());
         String gender = selectedGender.getText().toString();
 
@@ -180,7 +182,7 @@ public class Updateprofile extends AppCompatActivity {
         String address_city= Address_city.getEditText().getText().toString().trim();
         String address_state= Address_state.getEditText().getText().toString().trim();
 
-
+        Log.d(LSJ, "test2"+fsUserID);
         final DocumentReference docRefUserDetails = fStore.collection("UserDetails").document(fsUserID);
 
 
@@ -201,6 +203,9 @@ public class Updateprofile extends AppCompatActivity {
         userDetails.put("location_admin","false" );
         userDetails.put("registered_by","self" );
         userDetails.put("registered_on",currentDateTime);
+
+
+        Log.d(LSJ, "test3"+currentDateTime);
 
         docRefUserDetails.set(userDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
