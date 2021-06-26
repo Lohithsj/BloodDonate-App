@@ -11,15 +11,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +50,10 @@ public class Updateprofile extends AppCompatActivity {
     Button next;
     TextView titleText, slideText;
 
+    //spinner
+    Spinner spinner;
+    String[] paths = {"A+","O+","B+","AB+","A-","O-","B-","AB-"};
+
     //log
     // For Logging
     public static final String LSJ = "Data saving";
@@ -69,6 +77,7 @@ public class Updateprofile extends AppCompatActivity {
 
     RadioGroup gender_group;
     RadioButton selectedGender;
+
     TextView  age_picker;
     TextInputLayout first_name, last_name, email,blood_group,dob_layout;
     TextInputLayout Address_line1, Address_line2, Address_village, Address_zipcode;
@@ -96,7 +105,29 @@ public class Updateprofile extends AppCompatActivity {
         first_name = findViewById(R.id.signup_first_name);
         last_name = findViewById(R.id.signup_last_name);
         email = findViewById(R.id.signup_email);
-        blood_group = findViewById(R.id.signup_blodgroup);
+        //spinner
+        //blood_group = findViewById(R.id.signup_blodgroup);
+
+        spinner = (Spinner)findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(Updateprofile.this,
+                android.R.layout.simple_spinner_item,paths);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.v("item", (String) parent.getItemAtPosition(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+
         gender_group = findViewById(R.id.signup_gender_group);
         age_picker = findViewById(R.id.display_Date);
 
@@ -157,32 +188,86 @@ public class Updateprofile extends AppCompatActivity {
 
     public void callNextScreen(View view) {
 
-        if (!validateFirstName() | !validateLastName() | validateEmail() | validateBloodGropu()  | !validateGender() | !validateAge() | !validateAddaress() | !validateZipcode() ) {
+        if (!validateFirstName()) {
             Log.d(LSJ, " User details are validated sucessfully");
             return;
         }
-        //variable from this page
-        String _first_name = first_name.getEditText().getText().toString().trim();
-        String _last_name = last_name.getEditText().getText().toString().trim();
-        String _email = email.getEditText().getText().toString().trim();
-        String _blood_group = blood_group.getEditText().getText().toString().trim();
-
 
         Log.d(LSJ, "test1");
+        //variable from this page
+        String _first_name = first_name.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) first_name)) {
+            first_name.setError("Your message");
+            return;
+        }*/
+        String _last_name = last_name.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) last_name)) {
+            last_name.setError("Your message");
+            return;
+        }*/
+        String _email = email.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) email)) {
+            email.setError("Your message");
+            return;
+        }*/
+        String _blood_group = blood_group.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) blood_group)) {
+            blood_group.setError("Your message");
+            return;
+        }*/
+
+        Log.d(LSJ, "test2"+_first_name+_last_name+_blood_group);
+
         selectedGender = findViewById(gender_group.getCheckedRadioButtonId());
+        Log.d(LSJ, "test3"+selectedGender);
         String gender = selectedGender.getText().toString();
+        /*if(TextUtils.isEmpty((CharSequence) selectedGender)) {
+            selectedGender.setError("Your message");
+            return;
+        }*/
+
+
+
 
         String dateOfBirth = age_picker.getText().toString();
+        /*if(TextUtils.isEmpty((CharSequence) age_picker)) {
+            age_picker.setError("Your message");
+            return;
+        }*/
 
         //Variables address
         String address_line1= Address_line1.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) Address_line1)) {
+            Address_line1.setError("Your message");
+            return;
+        }*/
         String address_line2= Address_line2.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) Address_line2)) {
+            Address_line2.setError("Your message");
+            return;
+        }*/
         String address_village= Address_village.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) Address_village)) {
+            Address_village.setError("Your message");
+            return;
+        }*/
         String address_zipcode= Address_zipcode.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) Address_zipcode)) {
+            Address_zipcode.setError("Your message");
+            return;
+        }*/
         String address_city= Address_city.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) Address_city)) {
+            Address_city.setError("Your message");
+            return;
+        }*/
         String address_state= Address_state.getEditText().getText().toString().trim();
+        /*if(TextUtils.isEmpty((CharSequence) Address_state)) {
+            Address_state.setError("Your message");
+            return;
+        }*/
 
-        Log.d(LSJ, "test2"+fsUserID);
+        //Log.d(LSJ, "test2"+fsUserID);
         final DocumentReference docRefUserDetails = fStore.collection("UserDetails").document(fsUserID);
 
 
@@ -205,7 +290,7 @@ public class Updateprofile extends AppCompatActivity {
         userDetails.put("registered_on",currentDateTime);
 
 
-        Log.d(LSJ, "test3"+currentDateTime);
+        //Log.d(LSJ, "test3"+currentDateTime);
 
         docRefUserDetails.set(userDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

@@ -59,10 +59,10 @@
     <string name="gender">Gender</string>
     <string name="gender_male">Male</string>
     <string name="gender_female">Female</string>
-    <string name="gender_others">Others</string>
     <string name="enter_state">State</string>
     <string name="personal_details">Personal Details</string>
     <string name="date_of_birth">Date of Birth</string>
     <string name="e_rakt_kosh">E-Rakt Kosh</string>
+
 
 </resources>
