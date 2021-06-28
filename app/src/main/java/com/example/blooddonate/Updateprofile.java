@@ -28,15 +28,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Updateprofile extends AppCompatActivity {
@@ -73,13 +78,13 @@ public class Updateprofile extends AppCompatActivity {
     // Firebase Variables
     FirebaseAuth firebaseAuth;
     FirebaseFirestore fStore;
-    String userID, userPhoneNumber,fsUserID,currentDateTime;
+    String userID, userPhoneNumber,fsUserID,currentDateTime,blood_grp;  /* --- Added blood_grp string By sushma --*/
 
     RadioGroup gender_group;
     RadioButton selectedGender;
 
-    TextView  age_picker;
-    TextInputLayout first_name, last_name, email,blood_group,dob_layout;
+    TextView  age_picker,blood_group;
+    TextInputLayout first_name, last_name, email,dob_layout;
     TextInputLayout Address_line1, Address_line2, Address_village, Address_zipcode;
     TextInputLayout Address_city, Address_state, phone_number;
     Button profile_edit_button;
@@ -99,6 +104,7 @@ public class Updateprofile extends AppCompatActivity {
         userPhoneNumber= firebaseAuth.getCurrentUser().getPhoneNumber();
         fsUserID = userPhoneNumber.substring(1);
 
+
         //Hooks for Getting Data
 
         selectDate = findViewById(R.id.select_Date);
@@ -106,7 +112,7 @@ public class Updateprofile extends AppCompatActivity {
         last_name = findViewById(R.id.signup_last_name);
         email = findViewById(R.id.signup_email);
         //spinner
-        //blood_group = findViewById(R.id.signup_blodgroup);
+        //blood_group = findViewById(R.id.blood_grp);
 
         spinner = (Spinner)findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(Updateprofile.this,
@@ -117,6 +123,8 @@ public class Updateprofile extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                /* --- Added By sushma --*/
+                blood_grp= (String) parent.getItemAtPosition(position);
                 Log.v("item", (String) parent.getItemAtPosition(position));
                 return;
             }
@@ -140,7 +148,11 @@ public class Updateprofile extends AppCompatActivity {
         phone_number = findViewById(R.id.signup_phone_number);
         profile_edit_button = findViewById(R.id.profile_next_button);
 
+        // Setting CurrentDateTime /*-- Added by Sushma*/
 
+        currentDateTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        //Calender logic  /*-- Added by Sushma*/
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -182,90 +194,61 @@ public class Updateprofile extends AppCompatActivity {
             }
         });
 
-    }
+    } //on create function ends here
 
     ///nextButton
 
     public void callNextScreen(View view) {
 
-        if (!validateFirstName()) {
-            Log.d(LSJ, " User details are validated sucessfully");
+        if (!validateFirstName() | !validateLastName() | !validateEmail() |!validateGender() | !validateAge() | !validateAddress()| !validateZipCode()) {
+            Log.d(LSJ, " User details are validated successfully");
             return;
         }
+
 
         Log.d(LSJ, "test1");
         //variable from this page
         String _first_name = first_name.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) first_name)) {
-            first_name.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "firstName"+_first_name);
         String _last_name = last_name.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) last_name)) {
-            last_name.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "_last_name"+_last_name);
         String _email = email.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) email)) {
-            email.setError("Your message");
-            return;
-        }*/
-        String _blood_group = blood_group.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) blood_group)) {
-            blood_group.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "_email"+_email);
 
-        Log.d(LSJ, "test2"+_first_name+_last_name+_blood_group);
+        /*-- Added by Sushma*/
+        Log.d(LSJ, "_blood_group"+blood_grp);
+
 
         selectedGender = findViewById(gender_group.getCheckedRadioButtonId());
-        Log.d(LSJ, "test3"+selectedGender);
-        String gender = selectedGender.getText().toString();
-        /*if(TextUtils.isEmpty((CharSequence) selectedGender)) {
-            selectedGender.setError("Your message");
-            return;
-        }*/
 
+        String gender = selectedGender.getText().toString();
+
+        Log.d(LSJ, "selectedGender"+gender);
 
 
 
         String dateOfBirth = age_picker.getText().toString();
-        /*if(TextUtils.isEmpty((CharSequence) age_picker)) {
-            age_picker.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "dateOfBirth"+dateOfBirth);
 
         //Variables address
         String address_line1= Address_line1.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) Address_line1)) {
-            Address_line1.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "address_line1"+address_line1);
+
         String address_line2= Address_line2.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) Address_line2)) {
-            Address_line2.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "address_line2"+address_line2);
+
         String address_village= Address_village.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) Address_village)) {
-            Address_village.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "address_village"+address_village);
+
         String address_zipcode= Address_zipcode.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) Address_zipcode)) {
-            Address_zipcode.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "address_zipcode"+address_zipcode);
+
         String address_city= Address_city.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) Address_city)) {
-            Address_city.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "address_city"+address_city);
+
         String address_state= Address_state.getEditText().getText().toString().trim();
-        /*if(TextUtils.isEmpty((CharSequence) Address_state)) {
-            Address_state.setError("Your message");
-            return;
-        }*/
+        Log.d(LSJ, "address_state"+address_state);
+
 
         //Log.d(LSJ, "test2"+fsUserID);
         final DocumentReference docRefUserDetails = fStore.collection("UserDetails").document(fsUserID);
@@ -275,7 +258,7 @@ public class Updateprofile extends AppCompatActivity {
         userDetails.put("firstName",_first_name);
         userDetails.put("lastName",_last_name);
         userDetails.put("email",_email );
-        userDetails.put("blood_group",_blood_group );
+        userDetails.put("blood_group",blood_grp);
         userDetails.put("gender",gender );
         userDetails.put("dateOfBirth",dateOfBirth);
         userDetails.put("address_line1",address_line1 );
@@ -315,8 +298,9 @@ public class Updateprofile extends AppCompatActivity {
 
     }
 
-    private boolean validateBloodGropu(){
-        if (blood_group.getEditText().toString().trim().isEmpty()) {
+    /*
+    private boolean validateBloodGroup(){
+        if (blood_grp.trim().isEmpty()) {
             try {
                 blood_group.setError("Enter Your Blood group");
             }
@@ -326,14 +310,14 @@ public class Updateprofile extends AppCompatActivity {
             return false;
         }
         return true;
-    }
+    }*/
 
     //validateFirstName
     private boolean validateFirstName() {
         String val = first_name.getEditText().getText().toString().trim();
 
 
-        String checkspaces = "^[aA-zZ]{3,20}$";
+        //String checkspaces = "^[aA-zZ]{3,20}$";
 
 
         if (val.isEmpty()) {
@@ -342,12 +326,9 @@ public class Updateprofile extends AppCompatActivity {
         } else if (val.length() > 20) {
             first_name.setError("Name is too large!");
             return false;
-        } else if (!val.matches(checkspaces)) {
-            first_name.setError("No White spaces are allowed!");
-            return false;
         } else {
             first_name.setError(null);
-            Log.d(LSJ, " User first name validate sucessfully");
+            Log.d(LSJ, " User first name validate successfully");
             return true;
 
         }
@@ -387,7 +368,7 @@ public class Updateprofile extends AppCompatActivity {
             return false;
         } else {
             email.setError(null);
-            Log.d(LSJ, " User first email validate sucessfully");
+            Log.d(LSJ, " User first email validate successfully");
             return true;
         }
 
@@ -399,7 +380,7 @@ public class Updateprofile extends AppCompatActivity {
             Toast.makeText(this, "Please Select Gender", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            Log.d(LSJ, " User gender validate sucessfully");
+            Log.d(LSJ, " User gender validate successfully");
             return true;
         }
 
@@ -410,16 +391,16 @@ public class Updateprofile extends AppCompatActivity {
     private boolean validateAge() {
 
         if(age_picker.getText().toString().length()!=10){
-           dob_layout.setError("Please enter DOB in DD/MM/YYYY format");
-           return false;
+            dob_layout.setError("Please enter DOB in DD/MM/YYYY format");
+            return false;
 
         }
-        Log.d(LSJ,  "VGV:  validateAge:furst line"+age_picker.getText().toString().trim().substring(6));
+        Log.d(LSJ,  "ls:  validateAge:furst line"+age_picker.getText().toString().trim().substring(6));
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         int userAge = Integer.parseInt(age_picker.getText().toString().trim().substring(6));
-//        Log.d(VGV,  "VGV:  validateAge:"+userAge);
+//        Log.d(LSJ,  "validateAge:"+userAge);
         int isAgeValid = currentYear - userAge;
-        Log.d(LSJ,  "VGV:  isAgeValid:"+isAgeValid);
+        Log.d(LSJ,  "isAgeValid:"+isAgeValid);
         if (isAgeValid < 18) {
             dob_layout.setError("You are not eligible to apply");
             return false;
@@ -428,14 +409,14 @@ public class Updateprofile extends AppCompatActivity {
     }
 
     // Validate Full Address
-    private boolean validateAddaress() {
+    private boolean validateAddress() {
         String val = Address_line1.getEditText().getText().toString().trim();
         if (val.isEmpty()) {
             Address_line1.setError("Field can not be empty");
             return false;
         }
         else if (val.length() > 50) {
-            Address_line1.setError("Last is too large!");
+            Address_line1.setError("Address is too large!");
             return false;
         }
         else {
@@ -446,7 +427,7 @@ public class Updateprofile extends AppCompatActivity {
     }
 
     // Validate Zip Code
-    private boolean validateZipcode() {
+    private boolean validateZipCode() {
         String val = Address_zipcode.getEditText().getText().toString().trim();
 
         String zipcode = "^\\d{6}$";
@@ -462,7 +443,7 @@ public class Updateprofile extends AppCompatActivity {
             return false;
         } else {
             Address_zipcode.setError(null);
-            Log.d(LSJ, " User zipcode validate sucessfully");
+            Log.d(LSJ, " User zipcode validated sucessfully");
             return true;
         }
     }
@@ -477,18 +458,25 @@ public class Updateprofile extends AppCompatActivity {
         //     editor.putBoolean(LOCATION_ADMIN, switch1.isChecked());
         editor.apply();
 //        editor.commit();
-        Log.d(LSJ, " User saved data sucessfully");
+        Log.d(LSJ, " User data saved successfully");
+
+        /*-- Added by Sushma--*/
+
+        Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+        startActivity(intent);
+        finish();
+
 
     }
 
     //saving a data
-   // public void saveData() {
-     //   SharedPreferences sharedPreferences = getSharedPreferences(LOGIN_USER_DETAILS, MODE_PRIVATE);
-     //   SharedPreferences.Editor editor = sharedPreferences.edit();
-     //   editor.putString(USER_PHONE_NUMBER, fsUserID);
-     //   editor.putString(FIRE_AUTH_UID, firebaseAuth.getCurrentUser().getUid());
-        //     editor.putBoolean(LOCATION_ADMIN, switch1.isChecked());
-      //  editor.apply();
+    // public void saveData() {
+    //   SharedPreferences sharedPreferences = getSharedPreferences(LOGIN_USER_DETAILS, MODE_PRIVATE);
+    //   SharedPreferences.Editor editor = sharedPreferences.edit();
+    //   editor.putString(USER_PHONE_NUMBER, fsUserID);
+    //   editor.putString(FIRE_AUTH_UID, firebaseAuth.getCurrentUser().getUid());
+    //     editor.putBoolean(LOCATION_ADMIN, switch1.isChecked());
+    //  editor.apply();
 //        editor.commit();
 
     //}

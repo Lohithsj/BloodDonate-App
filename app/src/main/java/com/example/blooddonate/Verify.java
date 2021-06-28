@@ -68,7 +68,7 @@ public class Verify extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if(currentUser != null){
+        if((currentUser != null)){
             sendToMain();
         }
     }
