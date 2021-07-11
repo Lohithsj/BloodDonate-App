@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,16 +23,40 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class Dashboard extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    public static final String LOGIN_USER_DETAILS = "loginUserDetails";
+    public static final String USER_PHONE_NUMBER = "USER_PHONE_NUMBER";
+    public static final String FIRE_AUTH_UID = "FIRE_AUTH_UID";
+    private static final String LSJ = "Dashbord6+";
+    private GradientDrawable gradient1, gradient2, gradient3, gradient4;
+
+    RecyclerView mostDemandCropRecycler, cropsDetailsRecycler,donarCountRecycler;
+
+    //firebase
+    FirebaseAuth fAuth;
+    FirebaseFirestore fStore;
 
     //decleration
 
@@ -41,7 +66,12 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     NavigationView navigationView;
     ImageView menuIcon;
     LinearLayout contentView,bloodGroup;
-    WebView webView;
+
+    String famr_count_str,userPhoneNumber, fireAuthUID,currentDateTime,donar_phone_num ,vig_name,dis_name,state_name,vig_donar_count,donar_count_dis,donar_count_state;
+    int dist_famr_count,state_famr_count,famr_count;
+
+    //collection refrence
+    CollectionReference colRef;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -60,11 +90,45 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         contentView = findViewById(R.id.content_view);
         bloodGroup = findViewById(R.id.blood_group);
 
+        donarCountRecycler=findViewById(R.id.donar_count_recycler);
+
+
+        //Instantiate firebase variables
+
+        fAuth = FirebaseAuth.getInstance();
+        fStore = FirebaseFirestore.getInstance();
+
+        // Initialise counters
+        dist_famr_count = 0;
+        state_famr_count = 0;
+        famr_count = 0;
+
+        //Get current date and Time to set the updated_date variable in firebase
+
+        currentDateTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        // Instantiate the collection reference for the required collection data to fetch from firebase
+
+        colRef = fStore.collection("Villages");
+
+        getUserDetailsFromSharedPreferences();
+
+        donar_phone_num = userPhoneNumber;
+        //Log.d(VGV, "onCreate: "+famr_phone_num);
+
+        // Initialise counters
+        dist_famr_count = 0;
+        state_famr_count = 0;
+        famr_count = 0;
+
+
 
         //navigation
         navigationDrawer();
 
-        //blood_group icon
+
+        //getting user profile
+        getUserProfile();
 
        /* for(int i = 0;i<images.length;i++){
             flipperImages(images[i]);
@@ -76,6 +140,185 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
     }
 
+    //donar count details
+    private void getUserProfile(){
+
+        DocumentReference docRef = fStore.collection("UserDetails").document(donar_phone_num);
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    //Log.d(VGV,  "getUserProfile:"+famr_phone_num);
+
+                    vig_name = documentSnapshot.getString("address_village");
+                    dis_name=documentSnapshot.getString("address_city");
+                    dis_name=dis_name.toLowerCase();
+                    state_name=documentSnapshot.getString("address_state");
+                    state_name=state_name.toLowerCase();
+                    //Log.d(VGV, "getUserProfile 1"+ vig_name+":"+dis_name+":"+state_name);
+
+                    // Call getFamrCountPerVillage
+
+                    getDonarCountPerVillage();
+
+
+                }else{
+
+                    // log error if details does not exists
+
+                    //Log.d(VGV, "Error getting Farmer count per Village from database");
+
+                    Toast.makeText(Dashboard.this,"Something went wrong. Kindly contact your Location Admin for assistance",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    private void getDonarCountPerVillage() {
+        DocumentReference docRef = fStore.collection("address_village").document(vig_name.toLowerCase());
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    vig_donar_count = documentSnapshot.getString("donarCount");
+                    if(vig_donar_count == null){
+                        vig_donar_count ="0";
+                    }
+                    Log.d(LSJ, "Donars count/Village "+ vig_donar_count);
+                    // Call getDonarCountPerDistrict
+
+                    getFamrCountPerDistrict();
+
+                }else{
+
+                    // log error if details does not exists
+
+                    Log.d(LSJ, "Error getting Donar count per Village from database");
+                    vig_donar_count="0";
+                    getFamrCountPerDistrict();
+
+                    // Toast.makeText(UserDashboard.this,"Something went wrong. Kindly contact your Location Admin for assistance",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    private void getFamrCountPerDistrict() {
+        // get Farmers count per district from Database
+
+        colRef.whereEqualTo("district",dis_name).
+
+                get().
+
+                addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete (@NonNull Task< QuerySnapshot > task) {
+                        if (task.isSuccessful()) {
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Data initialisation
+                                famr_count_str = (String) document.getData().get("farmerCount");
+                                if(famr_count_str == null){
+                                    famr_count_str ="0";
+                                }
+                                dist_famr_count = dist_famr_count + Integer.parseInt(famr_count_str);
+
+
+                            }
+                            donar_count_dis = Integer.toString(dist_famr_count);
+
+                            Log.d(LSJ, "Donarss count/district task successfull" + dist_famr_count);
+
+                            // Call getDonarCountPerState
+
+                            getDonarCountPerState();
+
+
+                        } else {
+                            Log.d(LSJ, "Error getting donar count per District: ", task.getException());
+                            donar_count_dis="0";
+                            getDonarCountPerState();
+                            //Toast.makeText(UserDashboard.this, "Something went wrong. Kindly contact your Location Admin for assistance", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void getDonarCountPerState() {
+
+        // get Farmers count per state from Database
+
+        colRef.whereEqualTo("address_state", state_name).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+
+                        // Data initialisation
+                        famr_count_str = (String)document.getData().get("farmerCount");
+                        if(famr_count_str == null){
+                            famr_count_str ="0";
+                        }
+                        state_famr_count=state_famr_count+Integer.parseInt(famr_count_str);
+
+                    }
+                    donar_count_state=Integer.toString(state_famr_count);
+                    Log.d(LSJ, "Farmers count/state task successfull"+ state_famr_count);
+                    donarDetailsRecycler();
+
+
+                } else {
+                    Log.d(LSJ, "Error getting Farmers count per state: ", task.getException());
+                    donar_count_state="0";
+                    donarDetailsRecycler();
+                    // Toast.makeText(UserDashboard.this, "Something went wrong. Kindly contact your Location Admin for assistance", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void donarDetailsRecycler() {
+
+        //All Gradients
+        int[] gradient_color1 = {0xff7adccf, 0xff7adccf};
+        int[] gradient_color2 = {0xffd4cbe5, 0xffd4cbe5};
+        int[] gradient_color3 = {0xfff7c59f, 0xFFf7c59f};
+
+        gradient1 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradient_color1);
+        gradient2 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradient_color2);
+        gradient3 = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradient_color3);
+
+        Log.d(LSJ, "farmerDetailsRecycler: "+vig_name+":"+vig_donar_count+":"+dis_name+":"+donar_count_dis+":"+state_name+":"+donar_count_state);
+
+        ArrayList<CategoriesWithDescHelperClass> farmerHelperClasses = new ArrayList<>();
+        farmerHelperClasses.add(new CategoriesWithDescHelperClass(gradient1, R.drawable.village_icon, vig_name.toUpperCase(),vig_famr_count));
+        farmerHelperClasses.add(new CategoriesWithDescHelperClass(gradient2, R.drawable.city_icon, dis_name.toUpperCase(),famr_count_dis));
+        farmerHelperClasses.add(new CategoriesWithDescHelperClass(gradient3, R.drawable.state_icon, state_name.toUpperCase(),famr_count_state));
+
+
+        donarCountRecycler.setHasFixedSize(true);
+        cdAdapter = new CategoriesWithDescAdapter(farmerHelperClasses);
+        donarCountRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        donarCountRecycler.setAdapter(cdAdapter);
+
+        //intent = new Intent(getApplicationContext(), ComingSoon.class);
+
+        /*cdAdapter.setOnCardClickListener(new CategoriesWithDescAdapter.OnCardClickListener() {
+            @Override
+            public void OnCardClick(int position) {
+                String pos= Integer.toString(position);
+                intent.putExtra("position", pos);
+                startActivity(intent);
+            }
+        });*/
+
+    }
 
 
     private void navigationDrawer() {
@@ -133,11 +376,11 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
             super.onBackPressed();
         }
 
-        if (webView.canGoBack()) {
+        /*if (webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
-        }
+        }*/
     }
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -150,7 +393,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
                 finish();
                 break;
             case R.id.profile:
-                startActivity(new Intent(getApplicationContext(), Dashboard.class));
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 finish();
                 break;
             case R.id.blood_bank:
@@ -187,12 +430,11 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     }
 
     private void logoutSaveData() {
-        //SharedPreferences sharedPreferences = getSharedPreferences(LOGIN_USER_DETAILS, MODE_PRIVATE);
-        //SharedPreferences.Editor editor = sharedPreferences.edit();
-        //editor.putString(USER_PHONE_NUMBER, "NONE");
-        //editor.putString(FIRE_AUTH_UID, "NONE");
-        //editor.putString(USER_LANGUAGE, USER_LANGUAGE);
-        //editor.apply();
+        SharedPreferences sharedPreferences = getSharedPreferences(LOGIN_USER_DETAILS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(USER_PHONE_NUMBER, "NONE");
+        editor.putString(FIRE_AUTH_UID, "NONE");
+        editor.apply();
     }
 
     public void flipperImages(int image) {
@@ -230,7 +472,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     }
 
     public void callProfile(View view) {
-        Intent mainIntent = new Intent(getApplicationContext(),Updateprofile.class);
+        Intent mainIntent = new Intent(getApplicationContext(),ProfileActivity.class);
         startActivity(mainIntent);
         finish();
     }
@@ -246,4 +488,12 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         startActivity(mainIntent);
         finish();
     }
+
+    //user deatails
+    public void getUserDetailsFromSharedPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences("loginUserDetails", MODE_PRIVATE);
+        userPhoneNumber = sharedPreferences.getString("USER_PHONE_NUMBER", "");
+        fireAuthUID = sharedPreferences.getString("FIRE_AUTH_UID", "");
+    }
+
 }
