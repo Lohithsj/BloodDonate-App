@@ -9,10 +9,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -23,6 +21,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.blooddonate.HomeAdapter.WithDescAdapter;
+import com.example.blooddonate.HomeAdapter.WithDescHelperClass;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -50,9 +49,13 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     public static final String USER_PHONE_NUMBER = "USER_PHONE_NUMBER";
     public static final String FIRE_AUTH_UID = "FIRE_AUTH_UID";
     private static final String LSJ = "Dashbord6+";
+
+
+    private com.example.blooddonate.HomeAdapter.DonarCount cAdapter;
+    private WithDescAdapter cdAdapter;
     private GradientDrawable gradient1, gradient2, gradient3, gradient4;
 
-    RecyclerView mostDemandCropRecycler, cropsDetailsRecycler,donarCountRecycler;
+    RecyclerView donarCountRecycler;
 
     //firebase
     FirebaseAuth fAuth;
@@ -67,8 +70,8 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     ImageView menuIcon;
     LinearLayout contentView,bloodGroup;
 
-    String famr_count_str,userPhoneNumber, fireAuthUID,currentDateTime,donar_phone_num ,vig_name,dis_name,state_name,vig_donar_count,donar_count_dis,donar_count_state;
-    int dist_famr_count,state_famr_count,famr_count;
+    String donar_count_str,userPhoneNumber, currentDateTime,donar_phone_num ,vig_name,dis_name,state_name,vig_donar_count,donar_count_dis,donar_count_state;
+    int dist_donar_count,state_donar_count,donar_count;
 
     //collection refrence
     CollectionReference colRef;
@@ -99,9 +102,9 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
         fStore = FirebaseFirestore.getInstance();
 
         // Initialise counters
-        dist_famr_count = 0;
-        state_famr_count = 0;
-        famr_count = 0;
+        dist_donar_count = 0;
+        state_donar_count = 0;
+        donar_count = 0;
 
         //Get current date and Time to set the updated_date variable in firebase
 
@@ -109,17 +112,17 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
         // Instantiate the collection reference for the required collection data to fetch from firebase
 
-        colRef = fStore.collection("Villages");
+        colRef = fStore.collection("UserDetails");
 
-        getUserDetailsFromSharedPreferences();
+        //getUserDetailsFromSharedPreferences();
+
+        userPhoneNumber = fAuth.getCurrentUser().getPhoneNumber().substring(1);
+
+
+        Log.d(LSJ, "User phone number "+ userPhoneNumber);
 
         donar_phone_num = userPhoneNumber;
         //Log.d(VGV, "onCreate: "+famr_phone_num);
-
-        // Initialise counters
-        dist_famr_count = 0;
-        state_famr_count = 0;
-        famr_count = 0;
 
 
 
@@ -149,16 +152,16 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
-                    //Log.d(VGV,  "getUserProfile:"+famr_phone_num);
+                    Log.d(LSJ,  "getUserProfile:"+donar_phone_num);
 
                     vig_name = documentSnapshot.getString("address_village");
                     dis_name=documentSnapshot.getString("address_city");
                     dis_name=dis_name.toLowerCase();
                     state_name=documentSnapshot.getString("address_state");
                     state_name=state_name.toLowerCase();
-                    //Log.d(VGV, "getUserProfile 1"+ vig_name+":"+dis_name+":"+state_name);
+                    Log.d(LSJ, "getUserProfile 1"+ vig_name+":"+dis_name+":"+state_name);
 
-                    // Call getFamrCountPerVillage
+                    // Call getDonarCountPerVillage
 
                     getDonarCountPerVillage();
 
@@ -167,7 +170,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
                     // log error if details does not exists
 
-                    //Log.d(VGV, "Error getting Farmer count per Village from database");
+                    Log.d(LSJ, "Error getting Farmer count from database");
 
                     Toast.makeText(Dashboard.this,"Something went wrong. Kindly contact your Location Admin for assistance",Toast.LENGTH_SHORT).show();
                 }
@@ -190,7 +193,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
                     Log.d(LSJ, "Donars count/Village "+ vig_donar_count);
                     // Call getDonarCountPerDistrict
 
-                    getFamrCountPerDistrict();
+                    getDonarCountPerDistrict();
 
                 }else{
 
@@ -198,7 +201,7 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
                     Log.d(LSJ, "Error getting Donar count per Village from database");
                     vig_donar_count="0";
-                    getFamrCountPerDistrict();
+                    getDonarCountPerDistrict();
 
                     // Toast.makeText(UserDashboard.this,"Something went wrong. Kindly contact your Location Admin for assistance",Toast.LENGTH_SHORT).show();
                 }
@@ -207,10 +210,10 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
     }
 
-    private void getFamrCountPerDistrict() {
+    private void getDonarCountPerDistrict() {
         // get Farmers count per district from Database
 
-        colRef.whereEqualTo("district",dis_name).
+        colRef.whereEqualTo("address_city",dis_name).
 
                 get().
 
@@ -221,17 +224,17 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Data initialisation
-                                famr_count_str = (String) document.getData().get("farmerCount");
-                                if(famr_count_str == null){
-                                    famr_count_str ="0";
+                                donar_count_str = (String) document.getData().get("donarCount");
+                                if(donar_count_str == null){
+                                    donar_count_str ="0";
                                 }
-                                dist_famr_count = dist_famr_count + Integer.parseInt(famr_count_str);
+                                dist_donar_count = dist_donar_count + Integer.parseInt(donar_count_str);
 
 
                             }
-                            donar_count_dis = Integer.toString(dist_famr_count);
+                            donar_count_dis = Integer.toString(dist_donar_count);
 
-                            Log.d(LSJ, "Donarss count/district task successfull" + dist_famr_count);
+                            Log.d(LSJ, "Donarss count/district task successfull" + dist_donar_count);
 
                             // Call getDonarCountPerState
 
@@ -261,15 +264,15 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
                         // Data initialisation
-                        famr_count_str = (String)document.getData().get("farmerCount");
-                        if(famr_count_str == null){
-                            famr_count_str ="0";
+                        donar_count_str = (String)document.getData().get("donarCount");
+                        if(donar_count_str == null){
+                            donar_count_str ="0";
                         }
-                        state_famr_count=state_famr_count+Integer.parseInt(famr_count_str);
+                        state_donar_count=state_donar_count+Integer.parseInt(donar_count_str);
 
                     }
-                    donar_count_state=Integer.toString(state_famr_count);
-                    Log.d(LSJ, "Farmers count/state task successfull"+ state_famr_count);
+                    donar_count_state=Integer.toString(state_donar_count);
+                    Log.d(LSJ, "Farmers count/state task successfull"+ state_donar_count);
                     donarDetailsRecycler();
 
 
@@ -296,14 +299,14 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
 
         Log.d(LSJ, "farmerDetailsRecycler: "+vig_name+":"+vig_donar_count+":"+dis_name+":"+donar_count_dis+":"+state_name+":"+donar_count_state);
 
-        ArrayList<CategoriesWithDescHelperClass> farmerHelperClasses = new ArrayList<>();
-        farmerHelperClasses.add(new CategoriesWithDescHelperClass(gradient1, R.drawable.village_icon, vig_name.toUpperCase(),vig_famr_count));
-        farmerHelperClasses.add(new CategoriesWithDescHelperClass(gradient2, R.drawable.city_icon, dis_name.toUpperCase(),famr_count_dis));
-        farmerHelperClasses.add(new CategoriesWithDescHelperClass(gradient3, R.drawable.state_icon, state_name.toUpperCase(),famr_count_state));
+        ArrayList<WithDescHelperClass> donarHelperClasses = new ArrayList<>();
+        donarHelperClasses.add(new WithDescHelperClass(gradient1, R.drawable.village_icon, vig_name.toUpperCase(),vig_donar_count));
+        donarHelperClasses.add(new WithDescHelperClass(gradient2, R.drawable.city_icon, dis_name.toUpperCase(),donar_count_dis));
+        donarHelperClasses.add(new WithDescHelperClass(gradient3, R.drawable.state_icon, state_name.toUpperCase(),donar_count_state));
 
 
         donarCountRecycler.setHasFixedSize(true);
-        cdAdapter = new CategoriesWithDescAdapter(farmerHelperClasses);
+        cdAdapter = new WithDescAdapter(donarHelperClasses);
         donarCountRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         donarCountRecycler.setAdapter(cdAdapter);
 
@@ -316,7 +319,8 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
                 intent.putExtra("position", pos);
                 startActivity(intent);
             }
-        });*/
+        });
+        */
 
     }
 
@@ -490,10 +494,10 @@ public class Dashboard extends AppCompatActivity implements NavigationView.OnNav
     }
 
     //user deatails
-    public void getUserDetailsFromSharedPreferences() {
+   /* public void getUserDetailsFromSharedPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("loginUserDetails", MODE_PRIVATE);
         userPhoneNumber = sharedPreferences.getString("USER_PHONE_NUMBER", "");
         fireAuthUID = sharedPreferences.getString("FIRE_AUTH_UID", "");
-    }
+    }*/
 
 }
